@@ -15,7 +15,7 @@ php artisan db:seed
 
 # Aufgaben
 
-1. Fehler auf admin/posts lösen?
+1. Fehler auf blog.test/admin/posts lösen?
     - Woher kam der Fehler?
 2. Der Admin soll bei Posts festlegen können wer der Autor ist.
 3. Jeden 1. des Monats soll das System einen Post mit Titel "Zusammenfassung (Monat im Format mm.yyyy)" im Hintergrund anlegen. Autor ist der Admin.

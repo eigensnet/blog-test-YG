@@ -22,3 +22,12 @@ php artisan db:seed
 4. Nach dem erstellen eines Posts soll der Admin eine Notification bekommen. Titel: "Neuer Post". Inhalt: Link zum Post.
 
 
+
+# Lösung
+1. Fehler auf blog.test/admin/posts lösen?
+- Woher kam der Fehler?
+- post (id=1) mit inexistenten user_id gespeichert (user_id=100)
+2. Der Admin soll bei Posts festlegen können wer der Autor ist.
+- _form.blade.php : selectbox mit users hinzufügen. nur wenn der benutzer ein admin ist.
+- PostController@edit : alle users mit namen und id zu View liefern
+- PostController@upüdate : user_id bei post aktualisieren

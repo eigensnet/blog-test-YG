@@ -35,12 +35,14 @@
 </div>
 
 
+
+
 @if (Auth::user()->is_admin)
     <div class="form-group{{ $errors->has('user_id') ? ' has-error' : '' }}">
         {!! Form::label('user_id', 'Autor', ['class' => 'col-md-2 control-label']) !!}
 
         <div class="col-md-8">
-            {!! Form::select('user_id', $users, null, ['class' => 'form-control', 'required']) !!}
+            {!! Form::select('user_id', $users, Auth::user()->id,['class' => 'form-control', 'required']) !!}
 
             <span class="help-block">
             <strong>{{ $errors->first('user_id') }}</strong>

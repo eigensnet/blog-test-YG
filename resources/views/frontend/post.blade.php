@@ -7,7 +7,7 @@
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        {{ $post->title }} - <small>by {{ $post->user->name }}</small>
+                        {{ $post->title }} - <small>by {{ $post->user['name'] }}</small>
 
                         <span class="pull-right">
                             {{ $post->created_at->toDayDateTimeString() }}
@@ -34,6 +34,6 @@
 
             </div>
 
-        </dev>
-    </dev>
+        </div>
+    </div>
 @endsection

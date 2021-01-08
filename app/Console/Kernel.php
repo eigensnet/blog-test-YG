@@ -2,6 +2,10 @@
 
 namespace App\Console;
 
+use App\Models\Category;
+use App\Models\Post;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -24,8 +28,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+         $schedule->call( function (){
+              Post::create(
+                 [
+                     'title'       => 'Zusammenfassung : ' . Carbon::now()->format('m-y'),
+                     'body'        => 'Zusammenfassung inhalt',
+                     'category_id' => rand(Category::orderBy('id','ASC')->pluck('id')->first(),Category::orderBy('id','ASC')->pluck('id')->last()),
+                     'user_id'     => (User::where('is_admin', 1)->first())->id,
+                 ]
+             );
+         })->monthly();
     }
 
     /**

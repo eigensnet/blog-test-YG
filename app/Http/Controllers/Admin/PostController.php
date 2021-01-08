@@ -7,6 +7,11 @@ use App\Http\Requests\PostRequest;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Notifications\newPostNotification;
+use App\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
@@ -21,20 +26,21 @@ class PostController extends Controller
     {
         $categories = Category::pluck('name', 'id')->all();
         $tags = Tag::pluck('name', 'name')->all();
+        $users = User::pluck('name', 'id')->all();
 
-        return view('admin.posts.create', compact('categories', 'tags'));
+        return view('admin.posts.create', compact('categories', 'tags', 'users'));
     }
 
     public function store(PostRequest $request)
     {
         $post = Post::create(
             [
-                'title'       => $request->title,
-                'body'        => $request->body,
+                'title' => $request->title,
+                'body' => $request->body,
                 'category_id' => $request->category_id,
+                'user_id' => $request->user_id,
             ]
         );
-
         $tagsId = collect($request->tags)->map(
             function ($tag) {
                 return Tag::firstOrCreate(['name' => $tag])->id;
@@ -44,12 +50,18 @@ class PostController extends Controller
         $post->tags()->attach($tagsId);
         flash()->overlay('Post created successfully.');
 
+        User::where('is_admin', 1)->first()->notify(new newPostNotification($post->id));
+
         return redirect('/admin/posts');
     }
 
     public function show(Post $post)
     {
         $post = $post->load(['user', 'category', 'tags', 'comments']);
+        if (auth()->user()->is_admin) {
+            DB::table('notifications')->where('data', '=', json_encode(["postId" => $post->id]))
+                                            ->update(['read_at'=>Carbon::now()]);
+        };
 
         return view('admin.posts.show', compact('post'));
     }
@@ -63,18 +75,20 @@ class PostController extends Controller
         }
 
         $categories = Category::pluck('name', 'id')->all();
+        $users = User::pluck('name', 'id')->all();
         $tags = Tag::pluck('name', 'name')->all();
 
-        return view('admin.posts.edit', compact('post', 'categories', 'tags'));
+        return view('admin.posts.edit', compact('post', 'categories', 'tags', 'users'));
     }
 
     public function update(PostRequest $request, Post $post)
     {
         $post->update(
             [
-                'title'       => $request->title,
-                'body'        => $request->body,
+                'title' => $request->title,
+                'body' => $request->body,
                 'category_id' => $request->category_id,
+                'user_id' => $request->user_id,
             ]
         );
 

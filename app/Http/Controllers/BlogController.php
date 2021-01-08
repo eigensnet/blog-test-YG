@@ -21,7 +21,6 @@ class BlogController extends Controller
             ->withCount('comments')
             ->published()
             ->simplePaginate(5);
-
         return view('frontend.index', compact('posts'));
     }
 
